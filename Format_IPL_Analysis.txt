@@ -1,0 +1,83 @@
+Format of IPL Analysis
+
+Perform PCA and check if the data is Gaussian
+
+
+
+Basic Data
+1. Team Names
+2. Total Matches Played
+3. Cities
+4. Venues
+5. List of Umpires
+6. Man of the match
+
+
+
+
+Players stats
+Batsman
+
+1. Player_match_experience
+2. strike rate
+3. average
+4. fours
+5. sixes
+6. Strike_Rate
+7. hundreds
+8. fifties
+9. ducks
+10. matches
+11. highest
+12. O/NO
+13. innings
+14. Teams Played
+15. Highest Partnership
+16. Best Against
+17. Worst Against
+18. Player of the match
+19. 
+
+Bowlers
+
+16. Wickets
+17. Overs Bowled
+18. Maiden
+19. Runs_conceded
+20. 5 Wickets
+21. Economy
+22. Best Against
+23. Worst Against
+24. wide
+25. Bye runs
+26. No balls
+27. No ball runs
+28. penalty runs
+29. Total extra runs
+30. Dismissal by catch
+31. Dismissal by bowled
+31. Dismissal by run out
+32. Dismissal by caught and bowled
+
+
+For each player
+1. years played year by year
+
+
+Team stats
+
+
+
+Venue Stats
+1. Average Runs scored each season
+2. Average Runs scored each season playing first
+3. Average Runs scored each season playing second
+4. Win % batting first
+5. Win % fielding first
+6. 
+
+
+
+
+
+
