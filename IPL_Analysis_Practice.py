@@ -76,6 +76,106 @@ plt.ylim(0,18)
 sns.barplot(x='Player Name', y='player_of_match', data=man_of_matches.head(20))
 
 
+
+
+stats = {'player name':[],
+        'matches played':[],
+         'strike rate':[],
+         'Average':[],
+         'ones':[],
+         'twos':[],
+         'threes':[],
+         'fives':[],
+         'fours':[],
+         'sixes':[],
+         'hundreds':[],
+         'fifties':[],
+         'ducks':[],
+         'matches':[],
+         'highest score':[],
+         'innings':[],
+         'highest partnership':[],
+         'best against':[],
+         'worst against':[],
+         'player of the match':[],
+         'wickets':[],
+         'overs bowled':[],
+         'maiden':[],
+         'runs conceded':[],
+         '5 wickets':[],
+         'economy':[],
+         'wides':[],
+         'bye runs':[],
+         'no balls':[],
+         'penalty runs':[],
+         'total extras':[],
+         'dismissal by catch':[],
+         'dismissal by run out':[],
+         'dismissal by caught and bowled':[]
+         }
+columns = ['player_name']
+
+player_stats = pd.DataFrame(columns=columns)
+type(player_stats)
+player_names = pd.concat([delivery['batsman'],delivery['non_striker']])
+player_names = player_names.value_counts().reset_index()
+player_names = player_names.drop(0, axis=1)
+player_names.columns=['player_name']
+type(player_names['player_name'])
+player_stats['player_name']=player_names['player_name']
+player_stats['fours']=four
+
+
+
+
+
+player_stats.insert(0,'player names',player_names, allow_duplicates=False)
+player_stats.drop_duplicates(subset='player names',keep='first',inplace=True)
+player_stats.reset_index()
+player_stats.loc['player name']=pd.concat([delivery['batsman'],delivery['non_striker']])
+player_stats = player_stats.drop('fours',axis=1)
+
+player_stats.insert(1, 'fours',np.zeros(465), True)
+
+temp = pd.DataFrame()
+temp['striker'] = delivery['batsman']
+temp['runs']= delivery['batsman_runs']
+
+fours=delivery.groupby('batsman')['batsman_runs'].agg(lambda x: (x==4).sum()).reset_index()
+sixes=delivery.groupby('batsman')['batsman_runs'].agg(lambda x: (x==6).sum()).reset_index()
+
+
+df2 = temp.groupby(['striker'])[temp['runs']==4].count().reset_index()
+
+df = delivery.groupby(['batsman'])['ball'].count().reset_index()
+player_stats.set_index('player_name',inplace=True)
+player_stats['balls'] = df['ball']
+sns.countplot(x='player_name', data=matches, palette=sns.color_palette('winter'))
+df1 = df.first()
+
+print(df.first())
+
+
+
+################# Practice #################
+
+ax = matches['toss_winner'].value_counts().plot.bar(width=0.9, color=sns.color_palette('RdYlGn',20))
+for p in ax.patches:
+    ax.annotate(format(p.get_height()), (p.get_x()+0.15, p.get_height()+1))
+
+plt.show()
+
+
+matches_played_byteams=pd.concat([matches['team1'],matches['team2']])
+matches_played_byteams=matches_played_byteams.value_counts().reset_index()
+matches_played_byteams.columns=['Team','Total Matches']
+matches_played_byteams.set_index('Team',inplace=True)
+matches_played_byteams['wins']=matches['winner'].value_counts().reset_index()['winner']
+
+
+
+
+
 highest_match_win=matches['winner'].value_counts().idxmax()
 
 
