@@ -17,6 +17,7 @@ import seaborn as sns
 
 py.init_notebook_mode(connected=True)
 plt.style.use('fivethirtyeight')
+os.chdir(r"/Users/kshitijsingh/Downloads/IPL-Analysis")
 os.chdir(r"C:\Users\ks20092693\IPL_Analysis_Practice")
 
 # 2. Importing the datasets
@@ -79,7 +80,7 @@ sns.barplot(x='Player Name', y='player_of_match', data=man_of_matches.head(20))
 
 
 stats = {'player name':[],
-        'matches played':[],
+         'matches played':[],
          'strike rate':[],
          'Average':[],
          'ones':[],
@@ -123,8 +124,46 @@ player_names = player_names.drop(0, axis=1)
 player_names.columns=['player_name']
 type(player_names['player_name'])
 player_stats['player_name']=player_names['player_name']
-player_stats['fours']=four
 
+
+
+balls = delivery.groupby(['batsman'])['ball'].count().reset_index()
+runs = delivery.groupby(['batsman'])['batsman_runs'].sum().reset_index()
+balls = balls.merge(runs, left_on='batsman', right_on='batsman', how='outer')
+balls = balls.rename(columns={'batsman':'batsman','ball':'balls_played','batsman_runs':'runs_scored'})
+sixes = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==6).sum()).reset_index()
+sixes = sixes.rename(columns={'batsman_runs':'sixes'})
+fours = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==4).sum()).reset_index()
+fours = fours.rename(columns={'batsman_runs':'fours'})
+balls['strike_rate'] = balls['runs_scored']*100/balls['ball_played']
+balls = balls.merge(fours, left_on='batsman', right_on='batsman', how='outer')
+balls = balls.merge(sixes, left_on='batsman', right_on='batsman', how='outer')
+ones = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==1).sum()).reset_index()
+ones = ones.rename(columns={'batsman_runs':'ones'})
+twos = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==2).sum()).reset_index()
+twos = twos.rename(columns={'batsman_runs':'twos'})
+threes = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==3).sum()).reset_index()
+threes = threes.rename(columns={'batsman_runs':'threes'})
+balls = balls.merge(ones, left_on='batsman', right_on='batsman', how='outer')
+balls = balls.merge(twos, left_on='batsman', right_on='batsman', how='outer')
+balls = balls.merge(threes, left_on='batsman', right_on='batsman', how='outer')
+
+
+
+
+##### Example #####
+ipl_data = {'Team': ['Riders', 'Riders', 'Devils', 'Devils', 'Kings',
+   'kings', 'Kings', 'Kings', 'Riders', 'Royals', 'Royals', 'Riders'],
+   'Rank': [1, 2, 2, 3, 3,4 ,1 ,1,2 , 4,1,2],
+   'Year': [2014,2015,2014,2015,2014,2015,2016,2017,2016,2014,2015,2017],
+   'Points':[876,789,863,673,741,812,756,788,694,701,804,690]}
+df = pd.DataFrame(ipl_data)
+
+grouped = df.groupby('Year')
+
+for name,group in grouped:
+   print(name)
+   print(group['Rank',1])
 
 
 
