@@ -135,7 +135,7 @@ sixes = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==6).sum()
 sixes = sixes.rename(columns={'batsman_runs':'sixes'})
 fours = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==4).sum()).reset_index()
 fours = fours.rename(columns={'batsman_runs':'fours'})
-balls['strike_rate'] = balls['runs_scored']*100/balls['ball_played']
+balls['strike_rate'] = balls['runs_scored']*100/balls['balls_played']
 balls = balls.merge(fours, left_on='batsman', right_on='batsman', how='outer')
 balls = balls.merge(sixes, left_on='batsman', right_on='batsman', how='outer')
 ones = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==1).sum()).reset_index()
@@ -148,7 +148,32 @@ balls = balls.merge(ones, left_on='batsman', right_on='batsman', how='outer')
 balls = balls.merge(twos, left_on='batsman', right_on='batsman', how='outer')
 balls = balls.merge(threes, left_on='batsman', right_on='batsman', how='outer')
 
+match_played = pd.DataFrame((delivery.groupby('batsman')['match_id'].unique())).reset_index()
 
+
+compare=delivery.groupby(["match_id", "batsman","batting_team"])['batsman_runs'].sum().reset_index()
+compare = compare.groupby(["batsman","batting_team"])["batsman_runs"].max().reset_index()
+compare = compare.groupby(["batsman"])["batsman_runs"].max().reset_index()
+balls = balls.merge(compare, left_on="batsman", right_on="batsman", how="outer")
+balls= balls.rename(columns={"batsman_runs":"highest score"})
+matches_played = delivery.groupby(['batsman'])['match_id'].nunique().reset_index()
+balls = balls.merge(matches_played, left_on="batsman", right_on="batsman", how="outer")
+balls = balls.rename(columns={'match_id':'matches_played'})
+man_of_match= matches['player_of_match'].value_counts().reset_index()
+man_of_match['batsman']=man_of_match['index']
+man_of_match = man_of_match.rename(columns={"Player Name":"batsman"})
+balls = balls.merge(man_of_match, left_on='batsman', right_on='batsman', how='outer')
+balls.drop(['index'], axis=1, inplace=True)
+balls = balls.reset_index()
+balls.drop(['index'], axis=1, inplace=True)
+
+scores_by_batsman= delivery.groupby(['match_id','batsman'])['batsman_runs'].sum().reset_index()
+
+fifties = scores_by_batsman.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x>=50 & x<100).count()).reset_index()
+
+for i, j in match_played:
+    print(i)
+    print(j)
 
 
 ##### Example #####

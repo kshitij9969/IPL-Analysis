@@ -18,24 +18,24 @@ Basic Data
 Players stats
 Batsman
 
-1. Player_match_experience
-2. strike rate
-3. average
-4. fours
-5. sixes
-6. Strike_Rate
+1. Player_match_experience (Done)
+2. strike rate (Done)
+3. average 
+4. fours (Done)
+5. sixes (Done)
+6. Strike_Rate (Done)
 7. hundreds
 8. fifties
 9. ducks
-10. matches
-11. highest
+10. matches (Already add number 1)
+11. highest (Done)
 12. O/NO
 13. innings
-14. Teams Played
-15. Highest Partnership
+14. Teams Played 
+15. Highest Partnership 
 16. Best Against
 17. Worst Against
-18. Player of the match
+18. Player of the match 
 19. 
 
 Bowlers
