@@ -169,8 +169,26 @@ balls.drop(['index'], axis=1, inplace=True)
 
 scores_by_batsman= delivery.groupby(['match_id','batsman'])['batsman_runs'].sum().reset_index()
 
-fifties = scores_by_batsman.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x>=50 & x<100).count()).reset_index()
+hundreds = scores_by_batsman.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x>=100).sum()).reset_index()
+fifties = scores_by_batsman.groupby(['batsman'])['batsman_runs'].agg(lambda x: np.logical_and(x>=50, x<100).sum()).reset_index()
+hundreds = hundreds.rename(columns={'batsman_runs':'hundreds'})
+fifties = fifties.rename(columns={'batsman_runs':'fifties'})
+balls = balls.merge(hundreds, left_on='batsman', right_on='batsman', how='outer')
+balls = balls.merge(fifties, left_on='batsman', right_on='batsman', how='outer')
 
+total_scores = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: x.sum()).reset_index()
+matches_played = delivery.groupby(['batsman'])['match_id'].nunique().reset_index()
+
+balls['average'] = balls['runs_scored']/balls['matches_played']
+
+
+ducks = delivery.groupby(['match_id','batsman'])['batsman_runs']
+
+ducks = delivery.groupby(['match_id','batsman'])['batsman_runs'].agg(lambda x: (x==0).sum()).reset_index()
+ducks.drop(['match_id'], axis = 1, inplace=True)
+balls = balls.merge(ducks, left_on='batsman', right_on='batsman', how='outer')
+
+balls.drop(['batsman_runs'], axis=1, inplace=True)
 for i, j in match_played:
     print(i)
     print(j)

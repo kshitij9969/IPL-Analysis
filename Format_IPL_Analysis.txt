@@ -20,33 +20,33 @@ Batsman
 
 1. Player_match_experience (Done)
 2. strike rate (Done)
-3. average 
+3. average (Done)
 4. fours (Done)
 5. sixes (Done)
 6. Strike_Rate (Done)
-7. hundreds
-8. fifties
+7. hundreds (Done)
+8. fifties (Done)
 9. ducks
 10. matches (Already add number 1)
 11. highest (Done)
 12. O/NO
-13. innings
+13. innings 
 14. Teams Played 
 15. Highest Partnership 
 16. Best Against
 17. Worst Against
-18. Player of the match 
+18. Player of the match (Done) 
 19. 
 
 Bowlers
 
-16. Wickets
-17. Overs Bowled
-18. Maiden
-19. Runs_conceded
-20. 5 Wickets
-21. Economy
-22. Best Against
+16. Wickets 
+17. Overs Bowled 
+18. Maiden 
+19. Runs_conceded 
+20. 5 Wickets 
+21. Economy 
+22. Best Against 
 23. Worst Against
 24. wide
 25. Bye runs
@@ -79,5 +79,6 @@ Venue Stats
 
 
 
+Average is per year or overall
 
 
