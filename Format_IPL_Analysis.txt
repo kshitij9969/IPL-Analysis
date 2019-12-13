@@ -29,9 +29,9 @@ Batsman
 9. ducks
 10. matches (Already add number 1)
 11. highest (Done)
-12. O/NO
-13. innings 
-14. Teams Played 
+12. O/No 
+13. innings  
+14. Teams Played (Done)
 15. Highest Partnership 
 16. Best Against
 17. Worst Against

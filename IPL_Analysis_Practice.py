@@ -126,7 +126,7 @@ type(player_names['player_name'])
 player_stats['player_name']=player_names['player_name']
 
 
-
+ # Calculating parameters and storing them in balls
 balls = delivery.groupby(['batsman'])['ball'].count().reset_index()
 runs = delivery.groupby(['batsman'])['batsman_runs'].sum().reset_index()
 balls = balls.merge(runs, left_on='batsman', right_on='batsman', how='outer')
@@ -182,6 +182,7 @@ matches_played = delivery.groupby(['batsman'])['match_id'].nunique().reset_index
 balls['average'] = balls['runs_scored']/balls['matches_played']
 
 
+############ Not done yet ############ Ducks
 ducks = delivery.groupby(['match_id','batsman'])['batsman_runs']
 
 ducks = delivery.groupby(['match_id','batsman'])['batsman_runs'].agg(lambda x: (x==0).sum()).reset_index()
@@ -189,6 +190,23 @@ ducks.drop(['match_id'], axis = 1, inplace=True)
 balls = balls.merge(ducks, left_on='batsman', right_on='batsman', how='outer')
 
 balls.drop(['batsman_runs'], axis=1, inplace=True)
+
+
+############ Not done yet ############
+
+teams_played = delivery.groupby(['batsman'])['batting_team'].nunique()
+teams_played_1 = delivery.groupby(['batsman'])
+print(teams_played_1.groups)
+
+teams_played=teams_played.rename(columns={'batting_team':'teams_played'})
+teams_played = pd.DataFrame(teams_played)
+teams_played['batsman']=teams_played.index
+teams_played.drop(['index'], axis=1, inplace=True)
+
+teams_played.index.name = None
+
+balls = balls.merge(teams_played, left_on='batsman', right_on='batsman', how='outer')
+
 for i, j in match_played:
     print(i)
     print(j)
