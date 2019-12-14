@@ -17,8 +17,8 @@ import seaborn as sns
 
 py.init_notebook_mode(connected=True)
 plt.style.use('fivethirtyeight')
-os.chdir(r"/Users/kshitijsingh/Downloads/IPL-Analysis")
-os.chdir(r"C:\Users\ks20092693\IPL_Analysis_Practice")
+os.chdir(r"/Users/kshitijsingh/Downloads/IPL-Analysis") # For macOS
+os.chdir(r"C:\Users\ks20092693\IPL_Analysis_Practice") # For windows
 
 # 2. Importing the datasets
 matches = pd.read_csv('matches.csv')
@@ -61,14 +61,14 @@ total_venues = matches['city'].nunique()
 # List of all umpires 
 total_umpires = pd.concat([matches['umpire1'],matches['umpire2']])
 total_umpires = total_umpires.value_counts().reset_index()
+# Man of the matches
+man_of_matches=matches['player_of_match'].value_counts().reset_index()
+man_of_matches.columns=['Player Name', 'player_of_match']
+
 # Visualisation of Umpires
 total_umpires.columns=['Umpire Name', 'Matches Umpired']
 plt.xticks(rotation=90, fontsize=6)
 sns.barplot(x='Umpire Name', y='Matches Umpired', data=total_umpires)
-
-# Man of the matches
-man_of_matches=matches['player_of_match'].value_counts().reset_index()
-man_of_matches.columns=['Player Name', 'player_of_match']
 # Visualisation of Man of the match
 fig = plt.gcf()
 fig.set_size_inches(18.5,10.5)
@@ -77,109 +77,157 @@ plt.ylim(0,18)
 sns.barplot(x='Player Name', y='player_of_match', data=man_of_matches.head(20))
 
 
+# Computing and storing batsman data
 
 
-stats = {'player name':[],
-         'matches played':[],
-         'strike rate':[],
-         'Average':[],
-         'ones':[],
-         'twos':[],
-         'threes':[],
-         'fives':[],
-         'fours':[],
-         'sixes':[],
-         'hundreds':[],
-         'fifties':[],
-         'ducks':[],
-         'matches':[],
-         'highest score':[],
-         'innings':[],
-         'highest partnership':[],
-         'best against':[],
-         'worst against':[],
-         'player of the match':[],
-         'wickets':[],
-         'overs bowled':[],
-         'maiden':[],
-         'runs conceded':[],
-         '5 wickets':[],
-         'economy':[],
-         'wides':[],
-         'bye runs':[],
-         'no balls':[],
-         'penalty runs':[],
-         'total extras':[],
-         'dismissal by catch':[],
-         'dismissal by run out':[],
-         'dismissal by caught and bowled':[]
-         }
-columns = ['player_name']
+# Calculating batsman parameters and storing them in batting
+batting = delivery.groupby(['batsman'])['ball'].count().reset_index()
 
-player_stats = pd.DataFrame(columns=columns)
-type(player_stats)
-player_names = pd.concat([delivery['batsman'],delivery['non_striker']])
-player_names = player_names.value_counts().reset_index()
-player_names = player_names.drop(0, axis=1)
-player_names.columns=['player_name']
-type(player_names['player_name'])
-player_stats['player_name']=player_names['player_name']
-
-
- # Calculating parameters and storing them in balls
-balls = delivery.groupby(['batsman'])['ball'].count().reset_index()
-runs = delivery.groupby(['batsman'])['batsman_runs'].sum().reset_index()
-balls = balls.merge(runs, left_on='batsman', right_on='batsman', how='outer')
-balls = balls.rename(columns={'batsman':'batsman','ball':'balls_played','batsman_runs':'runs_scored'})
-sixes = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==6).sum()).reset_index()
-sixes = sixes.rename(columns={'batsman_runs':'sixes'})
-fours = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==4).sum()).reset_index()
-fours = fours.rename(columns={'batsman_runs':'fours'})
-balls['strike_rate'] = balls['runs_scored']*100/balls['balls_played']
-balls = balls.merge(fours, left_on='batsman', right_on='batsman', how='outer')
-balls = balls.merge(sixes, left_on='batsman', right_on='batsman', how='outer')
-ones = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==1).sum()).reset_index()
+runs = delivery.groupby(['batsman'])['batsman_runs'].sum().reset_index() # Total runs
+# Ones
+ones = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==1).sum()).reset_index() 
 ones = ones.rename(columns={'batsman_runs':'ones'})
-twos = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==2).sum()).reset_index()
+# Twos
+twos = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==2).sum()).reset_index() 
 twos = twos.rename(columns={'batsman_runs':'twos'})
-threes = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==3).sum()).reset_index()
+# Threes
+threes = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==3).sum()).reset_index() 
 threes = threes.rename(columns={'batsman_runs':'threes'})
-balls = balls.merge(ones, left_on='batsman', right_on='batsman', how='outer')
-balls = balls.merge(twos, left_on='batsman', right_on='batsman', how='outer')
-balls = balls.merge(threes, left_on='batsman', right_on='batsman', how='outer')
-
-match_played = pd.DataFrame((delivery.groupby('batsman')['match_id'].unique())).reset_index()
-
-
-compare=delivery.groupby(["match_id", "batsman","batting_team"])['batsman_runs'].sum().reset_index()
-compare = compare.groupby(["batsman","batting_team"])["batsman_runs"].max().reset_index()
-compare = compare.groupby(["batsman"])["batsman_runs"].max().reset_index()
-balls = balls.merge(compare, left_on="batsman", right_on="batsman", how="outer")
-balls= balls.rename(columns={"batsman_runs":"highest score"})
+# Fours
+fours = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==4).sum()).reset_index() 
+fours = fours.rename(columns={'batsman_runs':'fours'})
+# Fives
+fives = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==5).sum()).reset_index() 
+fives = fives.rename(columns={'batsman_runs':'fives'})
+# Sixes
+sixes = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x==6).sum()).reset_index() 
+sixes = sixes.rename(columns={'batsman_runs':'sixes'})
+# Highest score
+highest=delivery.groupby(["match_id", "batsman","batting_team"])['batsman_runs'].sum().reset_index()
+highest = highest.groupby(["batsman","batting_team"])["batsman_runs"].max().reset_index()
+highest = highest.groupby(["batsman"])["batsman_runs"].max().reset_index()
+highest = highest.rename(columns={'batsman_runs':'highest'})
+# Matches played
 matches_played = delivery.groupby(['batsman'])['match_id'].nunique().reset_index()
-balls = balls.merge(matches_played, left_on="batsman", right_on="batsman", how="outer")
-balls = balls.rename(columns={'match_id':'matches_played'})
+matches_played=matches_played.rename(columns={'match_id':'matches'})
+# Man of the match
 man_of_match= matches['player_of_match'].value_counts().reset_index()
 man_of_match['batsman']=man_of_match['index']
-man_of_match = man_of_match.rename(columns={"Player Name":"batsman"})
-balls = balls.merge(man_of_match, left_on='batsman', right_on='batsman', how='outer')
-balls.drop(['index'], axis=1, inplace=True)
-balls = balls.reset_index()
-balls.drop(['index'], axis=1, inplace=True)
-
+man_of_match.drop(['index'], axis = 1, inplace=True)
+# Score by a player in matches
 scores_by_batsman= delivery.groupby(['match_id','batsman'])['batsman_runs'].sum().reset_index()
-
+# Hundreds
 hundreds = scores_by_batsman.groupby(['batsman'])['batsman_runs'].agg(lambda x: (x>=100).sum()).reset_index()
-fifties = scores_by_batsman.groupby(['batsman'])['batsman_runs'].agg(lambda x: np.logical_and(x>=50, x<100).sum()).reset_index()
 hundreds = hundreds.rename(columns={'batsman_runs':'hundreds'})
+# Fifties
+fifties = scores_by_batsman.groupby(['batsman'])['batsman_runs'].agg(lambda x: np.logical_and(x>=50, x<100).sum()).reset_index()
 fifties = fifties.rename(columns={'batsman_runs':'fifties'})
-balls = balls.merge(hundreds, left_on='batsman', right_on='batsman', how='outer')
-balls = balls.merge(fifties, left_on='batsman', right_on='batsman', how='outer')
-
+# Total runs
 total_scores = delivery.groupby(['batsman'])['batsman_runs'].agg(lambda x: x.sum()).reset_index()
-matches_played = delivery.groupby(['batsman'])['match_id'].nunique().reset_index()
+# Teams played for
+teams_played = delivery.groupby(['batsman'])['batting_team'].nunique()
+teams_played = pd.DataFrame(teams_played)
+teams_played['batsman']=teams_played.index
+teams_played.index.name = None # To avoid ambigious index error
+teams_played = teams_played.rename(columns={'batting_team':'teams_played'})
+teams_played= teams_played[:-1]
+# Run outs
+run_out = delivery.groupby(['batsman'])['dismissal_kind'].agg(lambda x: (x=='run out').sum()).reset_index()
+run_out = run_out.rename(columns={'dismissal_kind':'run_outs'})
 
-balls['average'] = balls['runs_scored']/balls['matches_played']
+# Merging with batting
+
+
+# Merging runs and renaming appropriatly
+batting = batting.merge(runs, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.rename(columns={'batsman':'batsman','ball':'balls_played','batsman_runs':'runs_scored'})
+
+# Merging ones, twos, threes, fours, fives and sixes and renaming appropriatly
+batting = batting.merge(ones, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(twos, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(threes, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(fours, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(fives, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(sixes, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(highest, left_on="batsman", right_on="batsman", how="outer")
+batting = batting.merge(matches_played, left_on="batsman", right_on="batsman", how="outer")
+batting = batting.merge(man_of_match, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(hundreds, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(fifties, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(teams_played, left_on='batsman', right_on='batsman', how='outer')
+batting = batting.merge(run_out, left_on='batsman', right_on='batsman', how='outer')
+
+
+# Calculating strike rate
+# Strike rate = runs scored per ball or strike rate = (runs scored)/(balls played)
+batting['strike_rate'] = batting['runs_scored']*100/batting['balls_played']
+
+# Calculating average runs
+# Average runs = runs scored per match or average runs = (runs scored)/(matches played)
+batting['average'] = batting['runs_scored']/batting['matches_played']
+
+
+# Calculating bowler parameters
+
+balls = delivery.groupby(['bowler'])['ball'].count().reset_index()
+maiden = delivery.groupby(['bowler','over']) ## Not done
+runs_conceded = delivery.groupby(['bowler'])['total_runs'].sum().reset_index()
+runs_conceded = runs_conceded.rename(columns={'total_runs':'runs_conceded'})
+fifer = delivery.groupby(['match_id','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+fifer = fifer.groupby(['bowler'])['player_dismissed'].agg(lambda x: (x>=5).sum()).reset_index()
+fifer = fifer.rename(columns={'player_dismissed':'fifer'})
+fours_w = delivery.groupby(['match_id','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+fours_w = fours_w.groupby(['bowler'])['player_dismissed'].agg(lambda x: (x==4).sum()).reset_index()
+fours_w = fours_w.rename(columns={'player_dismissed':'fours'})
+
+threes_w = delivery.groupby(['match_id','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+threes_w = threes_w.groupby(['bowler'])['player_dismissed'].agg(lambda x: (x==3).sum()).reset_index()
+threes_w = threes_w.rename(columns={'player_dismissed':'threes'})
+
+twos_w = delivery.groupby(['match_id','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+twos_w = twos_w.groupby(['bowler'])['player_dismissed'].agg(lambda x: (x==2).sum()).reset_index()
+twos_w = twos_w.rename(columns={'player_dismissed':'twos'})
+
+ones_w = delivery.groupby(['match_id','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+ones_w = ones_w.groupby(['bowler'])['player_dismissed'].agg(lambda x: (x==1).sum()).reset_index()
+ones_w = ones_w.rename(columns={'player_dismissed':'ones'})
+
+wides = delivery.groupby(['bowler'])['wide_runs'].agg(lambda x: x.sum()).reset_index()
+bye_runs = delivery.groupby(['bowler'])['bye_runs'].agg(lambda x: x.sum()).reset_index()
+no_balls_runs = delivery.groupby(['bowler'])['noball_runs'].agg(lambda x: x.sum()).reset_index()
+penalty_runs = delivery.groupby(['bowler'])['penalty_runs'].agg(lambda x: x.sum()).reset_index()
+extra_runs = delivery.groupby(['bowler'])['extra_runs'].agg(lambda x: x.sum()).reset_index()
+caught = delivery.groupby(['bowler'])['dismissal_kind'].agg(lambda x: (x=='caught').sum()).reset_index()
+caught =  caught.rename(columns={'dismissal_kind':'caught'})
+bowled = delivery.groupby(['bowler'])['dismissal_kind'].agg(lambda x: (x=='bowled').sum()).reset_index()
+bowled = bowled.rename(columns={'dismissal_kind':'bowled'})
+caught_and_bowled = delivery.groupby(['bowler'])['dismissal_kind'].agg(lambda x: (x=='caught and bowled').sum()).reset_index()
+caught_and_bowled = caught_and_bowled.rename(columns={'dismissal_kind':'caught_and_bowled'})
+lbw =  delivery.groupby(['bowler'])['dismissal_kind'].agg(lambda x: (x=='lbw').sum()).reset_index()
+lbw = lbw.rename(columns={'dismissal_kind':'lbw'})
+
+
+# Merging with bowling
+
+bowler = delivery.groupby(['bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+bowler = bowler.rename(columns={'player_dismissed':'wickets'})
+bowler = bowler.merge(balls, left_on='bowler', right_on='bowler', how='outer')
+# bowler = bowler.merge(maiden, left_on='bowler', right_on='bowler', how='outer') # Not done
+bowler = bowler.merge(runs_conceded, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(fifer, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(wides, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(bye_runs, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(no_balls_runs, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(penalty_runs, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(extra_runs, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(caught, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(bowled, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(caught_and_bowled, left_on='bowler', right_on='bowler', how='outer')
+bowler = bowler.merge(lbw, left_on='bowler', right_on='bowler', how='outer')
+
+
+# Calculating economy 
+bowler['economy'] = bowler['runs_conceded']*6/(bowler['ball'])
 
 
 ############ Not done yet ############ Ducks
@@ -191,42 +239,22 @@ balls = balls.merge(ducks, left_on='batsman', right_on='batsman', how='outer')
 
 balls.drop(['batsman_runs'], axis=1, inplace=True)
 
+#### Analysis of bowlers ####
+
+# Feature scaling
+from sklearn.preprocessing import StandardScaler
+sc_X = StandardScaler()
+temp_bowler = bowler[['bowler','economy','wickets']].copy()
+
+temp_train = sc_X.fit_transform(temp_bowler[['economy','wickets']])
+
+temp_train = pd.DataFrame(temp_train)
+temp_train = temp_train.rename(columns={'1':'wickets'})
+plt.scatter(temp_train['0'], temp_train['1'])
+
+
 
 ############ Not done yet ############
-
-teams_played = delivery.groupby(['batsman'])['batting_team'].nunique()
-teams_played_1 = delivery.groupby(['batsman'])
-print(teams_played_1.groups)
-
-teams_played=teams_played.rename(columns={'batting_team':'teams_played'})
-teams_played = pd.DataFrame(teams_played)
-teams_played['batsman']=teams_played.index
-teams_played.drop(['index'], axis=1, inplace=True)
-
-teams_played.index.name = None
-
-balls = balls.merge(teams_played, left_on='batsman', right_on='batsman', how='outer')
-
-for i, j in match_played:
-    print(i)
-    print(j)
-
-
-##### Example #####
-ipl_data = {'Team': ['Riders', 'Riders', 'Devils', 'Devils', 'Kings',
-   'kings', 'Kings', 'Kings', 'Riders', 'Royals', 'Royals', 'Riders'],
-   'Rank': [1, 2, 2, 3, 3,4 ,1 ,1,2 , 4,1,2],
-   'Year': [2014,2015,2014,2015,2014,2015,2016,2017,2016,2014,2015,2017],
-   'Points':[876,789,863,673,741,812,756,788,694,701,804,690]}
-df = pd.DataFrame(ipl_data)
-
-grouped = df.groupby('Year')
-
-for name,group in grouped:
-   print(name)
-   print(group['Rank',1])
-
-
 
 
 player_stats.insert(0,'player names',player_names, allow_duplicates=False)
@@ -254,6 +282,67 @@ sns.countplot(x='player_name', data=matches, palette=sns.color_palette('winter')
 df1 = df.first()
 
 print(df.first())
+
+
+
+
+##### Perform K-means #####
+
+np.random.seed(200)
+plt.scatter()
+temp1= balls.loc[balls['balls_played']>200]
+temp = pd.DataFrame({
+        'strike_rate':temp1['strike_rate'],
+        'average':temp1['average']   
+        })
+
+
+plt.scatter(temp['average'], temp['strike_rate'])
+
+from sklearn.cluster import KMeans
+kmeans=KMeans(n_clusters=5)
+labels=kmeans.fit(temp)
+temp=temp.fillna(0)
+
+
+
+
+
+labels = kmeans.predict(temp)
+centroid = kmeans.cluster_centers_
+
+
+
+centroids = kmeans.cluster_centers_
+colmap = {1:'r',2:'g',3:'b', 4:'y', 5:'k'}
+fig = plt.figure(figsize=(5,5))
+colors=map(lambda x: colmap[x+1], labels)
+color1=list(colors)
+plt.scatter(temp['average'],temp['strike_rate'],color=color1,alpha=0.5,edgecolor='k')
+for idx, centroid in enumerate(centroids):
+    plt.scatter(*centroid, color=colmap[idx+1])
+
+plt.xlim(0,50)
+plt.ylim(0,250)
+plt.show()
+
+
+
+##### Perform K-means #####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

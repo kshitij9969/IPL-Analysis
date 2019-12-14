@@ -1,5 +1,12 @@
 Format of IPL Analysis
 
+Problem statement - Figure out why a team performs so good and other perform so bad?
+Make a team that is
+1. Most economical
+2. Least economical
+
+
+
 Perform PCA and check if the data is Gaussian
 
 
@@ -26,38 +33,37 @@ Batsman
 6. Strike_Rate (Done)
 7. hundreds (Done)
 8. fifties (Done)
-9. ducks
 10. matches (Already add number 1)
 11. highest (Done)
 12. O/No 
-13. innings  
+13. innings 
 14. Teams Played (Done)
 15. Highest Partnership 
-16. Best Against
-17. Worst Against
+16. Best Against 
+17. Worst Against 
 18. Player of the match (Done) 
-19. 
+19. Dismissal by run out (Done)
 
 Bowlers
 
-16. Wickets 
+16. Wickets (Done)
 17. Overs Bowled 
 18. Maiden 
-19. Runs_conceded 
-20. 5 Wickets 
-21. Economy 
+19. Runs_conceded (Done)
+20. 5 Wickets (Done)
+21. Economy (Done)
 22. Best Against 
 23. Worst Against
-24. wide
-25. Bye runs
-26. No balls
-27. No ball runs
-28. penalty runs
-29. Total extra runs
-30. Dismissal by catch
-31. Dismissal by bowled
-31. Dismissal by run out
-32. Dismissal by caught and bowled
+24. wide (Done)
+25. Bye runs (Done)
+26.
+27. No ball runs (Done)
+28. penalty runs(Done)
+29. Total extra runs (Done)
+30. Dismissal by catch (Done)
+31. Dismissal by bowled (Done)
+31. Dismissal by lbw (Done)
+32. Dismissal by caught and bowled (Done)
 
 
 For each player
@@ -80,5 +86,7 @@ Venue Stats
 
 
 Average is per year or overall
+
+
 
 
