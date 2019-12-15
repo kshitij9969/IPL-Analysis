@@ -264,8 +264,6 @@ teams.insert(13, 'PW', 0, allow_duplicates=False)
 
 
 
-
-
 teams['players']= batting['batsman']
 players_played = delivery.groupby(['batting_team','batsman'])['match_id'].nunique()
 temp_index = players_played.index
@@ -327,8 +325,20 @@ print(delivery.groupby(['batting_team']))
 
 
 
+#### Segregating death over bowler, power play bowlers and middle over bowler
 
+death_over_bowlers = pd.DataFrame(delivery.groupby(['bowling_team','over'])['bowler'])
+death_over_bowlers.columns = death_over_bowlers.columns.astype(str)
+temp = death_over_bowlers['0']
+death_over_bowlers['team'] = temp.str[0]
+death_over_bowlers['over'] = temp.str[1]
+death_over_bowlers.drop(['0'], axis=1, inplace=True)
+temp = death_over_bowlers['1']
 
+for i in range(len(temp)):
+    temp.iloc[i]=[x for x in temp.iloc[i] if not isinstance(x, int)]
+
+temp = [x for x in temp if not isinstance(x, int)]
 
 
 
