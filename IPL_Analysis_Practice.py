@@ -239,6 +239,99 @@ balls = balls.merge(ducks, left_on='batsman', right_on='batsman', how='outer')
 
 balls.drop(['batsman_runs'], axis=1, inplace=True)
 
+
+
+# Teams and team players across seasons
+
+teams = pd.DataFrame()
+teams[['players','MI','KKR','RCB','DC','CSK','RR','DD','GL','KXIP','SRH','RPS','KTK','PW',
+                 'RPS']] = [np.nan,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+teams.insert(0, 'players', np.nan, allow_duplicates=False)
+teams.insert(1, 'MI', 0, allow_duplicates=False)
+teams.insert(2, 'KKR', 0, allow_duplicates=False)
+teams.insert(3, 'RCB', 0, allow_duplicates=False)
+teams.insert(4, 'DC', 0, allow_duplicates=False)
+teams.insert(5, 'CSK', 0, allow_duplicates=False)
+teams.insert(6, 'RR', 0, allow_duplicates=False)
+teams.insert(7, 'DD', 0, allow_duplicates=False)
+teams.insert(8, 'GL', 0, allow_duplicates=False)
+teams.insert(9, 'KXIP', 0, allow_duplicates=False)
+teams.insert(10, 'SRH', 0, allow_duplicates=False)
+teams.insert(11, 'RPS', 0, allow_duplicates=False)
+teams.insert(12, 'KTK', 0, allow_duplicates=False)
+teams.insert(13, 'PW', 0, allow_duplicates=False)
+
+
+
+
+
+teams['players']= batting['batsman']
+players_played = delivery.groupby(['batting_team','batsman'])['match_id'].nunique()
+temp_index = players_played.index
+players_played = pd.DataFrame(players_played)
+players_played.insert(1, 'temp_index', temp_index)
+players_played.index.name = None
+players_played = players_played[:-1]
+players_played['team']= players_played['temp_index'].str[0]
+players_played['batsman']= players_played['temp_index'].str[1]
+players_played = players_played.set_index('batsman')
+print(players_played.index)
+players_played['batsman']= players_played.index
+players_played = players_played.reset_index()
+temp_players_played = delivery.groupby(['batting_team','batsman'])['match_id'].nunique()
+players_played.drop('temp_index', axis=1, inplace=True)
+
+
+
+
+players_played_bowler = delivery.groupby(['bowling_team','bowler'])['match_id'].nunique()
+temp_index = players_played_bowler.index
+players_played_bowler = pd.DataFrame(players_played_bowler)
+
+players_played_bowler.insert(1, 'temp_index', temp_index)
+
+players_played_bowler['team']= players_played_bowler['temp_index'].str[0]
+players_played_bowler['bowler']= players_played_bowler['temp_index'].str[1]
+players_played_bowler = players_played_bowler.set_index('bowler')
+players_played_bowler['bowler']= players_played_bowler.index
+players_played_bowler.drop(['temp_index'], axis=1, inplace=True)
+players_played_bowler.index.name = None
+
+MI_top_bowlers = pd.DataFrame(players_played_bowler[players_played_bowler['team']=='MI']).sort_values('match_id', ascending=False).head(10)
+CSK_top_bowlers = pd.DataFrame(players_played_bowler[players_played_bowler['team']=='CSK']).sort_values('match_id', ascending=False).head(10) 
+RCB_top_bowlers = pd.DataFrame(players_played_bowler[players_played_bowler['team']=='RCB']).sort_values('match_id', ascending=False).head(10) 
+MI_top_bowlers.insert(3, 'economy',np.nan)
+MI_top_bowlers.insert(4, 'wickets',np.nan)
+MI_top_bowlers.drop(['economy','wickets'], axis=1, inplace=True)
+
+CSK_top_bowlers.insert(3, 'economy',np.nan)
+CSK_top_bowlers.insert(4, 'wickets',np.nan)
+CSK_top_bowlers.drop(['economy','wickets'], axis=1, inplace=True)
+
+
+for bowl in MI_top_bowlers['bowler']:
+    print(bowl)
+    MI_top_bowlers[MI_top_bowlers['bowler']==bowl]['economy']=bowler[bowler['bowler']==bowl]['economy']
+
+MI_top_bowlers = MI_top_bowlers.merge(bowler, left_on='bowler', right_on='bowler', how='inner')
+CSK_top_bowlers = CSK_top_bowlers.merge(bowler, left_on='bowler', right_on='bowler', how='inner')
+RCB_top_bowlers = RCB_top_bowlers.merge(bowler, left_on='bowler', right_on='bowler', how='inner')
+
+
+plt.scatter(MI_top_bowlers['economy'], MI_top_bowlers['wickets'], color='blue')
+plt.scatter(CSK_top_bowlers['economy'], CSK_top_bowlers['wickets'], color='yellow')
+plt.scatter(RCB_top_bowlers['economy'], RCB_top_bowlers['wickets'], color='red')
+
+print(delivery.groupby(['batting_team']))
+
+
+
+
+
+
+
+
 #### Analysis of bowlers ####
 
 # Feature scaling
@@ -246,42 +339,25 @@ from sklearn.preprocessing import StandardScaler
 sc_X = StandardScaler()
 temp_bowler = bowler[['bowler','economy','wickets']].copy()
 
-temp_train = sc_X.fit_transform(temp_bowler[['economy','wickets']])
+temp_train = sc_X.fit_transform(temp_bowler_economy[['economy','wickets']])
 
 temp_train = pd.DataFrame(temp_train)
-temp_train = temp_train.rename(columns={'1':'wickets'})
-plt.scatter(temp_train['0'], temp_train['1'])
+
+temp_train.columns = temp_train.columns.astype(str)
+
+
+for col in temp_train.columns:
+    print(col)
+    
+    
+temp_bowler_economy = temp_bowler[np.logical_and(np.logical_and(temp_bowler['economy']>6, temp_bowler['economy']<8), temp_bowler['wickets']>50)]
+temp_train = temp_train.rename(columns={'0':'economy'})
+plt.scatter(temp_train['economy'], temp_train['wickets'])
+plt.scatter(temp_bowler_economy['economy'], temp_bowler_economy['wickets'])
 
 
 
-############ Not done yet ############
 
-
-player_stats.insert(0,'player names',player_names, allow_duplicates=False)
-player_stats.drop_duplicates(subset='player names',keep='first',inplace=True)
-player_stats.reset_index()
-player_stats.loc['player name']=pd.concat([delivery['batsman'],delivery['non_striker']])
-player_stats = player_stats.drop('fours',axis=1)
-
-player_stats.insert(1, 'fours',np.zeros(465), True)
-
-temp = pd.DataFrame()
-temp['striker'] = delivery['batsman']
-temp['runs']= delivery['batsman_runs']
-
-fours=delivery.groupby('batsman')['batsman_runs'].agg(lambda x: (x==4).sum()).reset_index()
-sixes=delivery.groupby('batsman')['batsman_runs'].agg(lambda x: (x==6).sum()).reset_index()
-
-
-df2 = temp.groupby(['striker'])[temp['runs']==4].count().reset_index()
-
-df = delivery.groupby(['batsman'])['ball'].count().reset_index()
-player_stats.set_index('player_name',inplace=True)
-player_stats['balls'] = df['ball']
-sns.countplot(x='player_name', data=matches, palette=sns.color_palette('winter'))
-df1 = df.first()
-
-print(df.first())
 
 
 
@@ -289,26 +365,17 @@ print(df.first())
 ##### Perform K-means #####
 
 np.random.seed(200)
-plt.scatter()
-temp1= balls.loc[balls['balls_played']>200]
-temp = pd.DataFrame({
-        'strike_rate':temp1['strike_rate'],
-        'average':temp1['average']   
-        })
-
-
-plt.scatter(temp['average'], temp['strike_rate'])
 
 from sklearn.cluster import KMeans
 kmeans=KMeans(n_clusters=5)
-labels=kmeans.fit(temp)
-temp=temp.fillna(0)
+labels=kmeans.fit(temp_train)
+temp_train=temp_train.fillna(0)
 
 
 
 
 
-labels = kmeans.predict(temp)
+labels = kmeans.predict(temp_train)
 centroid = kmeans.cluster_centers_
 
 
@@ -318,7 +385,7 @@ colmap = {1:'r',2:'g',3:'b', 4:'y', 5:'k'}
 fig = plt.figure(figsize=(5,5))
 colors=map(lambda x: colmap[x+1], labels)
 color1=list(colors)
-plt.scatter(temp['average'],temp['strike_rate'],color=color1,alpha=0.5,edgecolor='k')
+plt.scatter(temp_train['economy'],temp_train['wickets'],color=color1,alpha=0.5,edgecolor='k')
 for idx, centroid in enumerate(centroids):
     plt.scatter(*centroid, color=colmap[idx+1])
 
