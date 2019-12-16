@@ -335,6 +335,21 @@ death_over_bowlers['over'] = temp.str[1]
 death_over_bowlers.drop(['0'], axis=1, inplace=True)
 temp = death_over_bowlers['1']
 
+temp1 = delivery[delivery['over']==20]
+temp2 = temp1.groupby(['bowling_team'])
+temp2 = delivery[['bowling_team','bowler']][delivery['over']==20]
+temp2['bowler_count']=temp2['bowler'].value_counts().reset_index()
+
+temp_bowler_count = temp2.groupby(['bowling_team','bowler'])['bowler'].count()
+temp_bowler_count = pd.DataFrame(temp_bowler_count)
+temp_bowler_count['temp_1'] = temp_bowler_count.index
+temp_bowler_count['team'] = temp_bowler_count['temp_1'].str[0]
+temp_bowler_count['player'] = temp_bowler_count['temp_1'].str[1]
+temp_bowler_count.drop(columns={'temp_1'})
+temp_bowler_count.index.name = None
+temp_bowler_count = temp_bowler_count.rename(columns={'bowler':'death_overs_bowled'})
+temp_bowler_count = temp_bowler_count[:-2]
+
 for i in range(len(temp)):
     temp.iloc[i]=[x for x in temp.iloc[i] if not isinstance(x, int)]
 
