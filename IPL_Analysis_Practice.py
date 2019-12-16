@@ -338,17 +338,48 @@ temp = death_over_bowlers['1']
 temp1 = delivery[delivery['over']==20]
 temp2 = temp1.groupby(['bowling_team'])
 temp2 = delivery[['bowling_team','bowler']][delivery['over']==20]
-temp2['bowler_count']=temp2['bowler'].value_counts().reset_index()
 
 temp_bowler_count = temp2.groupby(['bowling_team','bowler'])['bowler'].count()
 temp_bowler_count = pd.DataFrame(temp_bowler_count)
 temp_bowler_count['temp_1'] = temp_bowler_count.index
 temp_bowler_count['team'] = temp_bowler_count['temp_1'].str[0]
 temp_bowler_count['player'] = temp_bowler_count['temp_1'].str[1]
-temp_bowler_count.drop(columns={'temp_1'})
+temp_bowler_count.drop(['temp_1'], axis=1, inplace=True)
 temp_bowler_count.index.name = None
 temp_bowler_count = temp_bowler_count.rename(columns={'bowler':'death_overs_bowled'})
 temp_bowler_count = temp_bowler_count[:-2]
+
+death_over_stats = delivery[delivery['over']==20]
+death_over_stats = death_over_stats.groupby(['bowling_team','bowler'])['total_runs'].sum().reset_index()
+death_over_balls = delivery[delivery['over']==20].groupby(['bowling_team','bowler'])['ball'].count().reset_index()
+death_over_stats['economy'] = death_over_stats['total_runs']*6/death_over_stats['ball']
+death_over_wickets = delivery[delivery['over']==20].groupby(['bowling_team','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+
+
+
+death_over_stats = death_over_stats.merge(death_over_balls, left_on=['bowler','bowling_team'], right_on=['bowler', 'bowling_team'], how='outer')
+death_over_stats = death_over_stats.merge(death_over_wickets, left_on=['bowler','bowling_team'], right_on=['bowler','bowling_team'], how='outer')
+temp_bowler_count = temp_bowler_count.merge(death_over_stats['total_runs'], left_on='player', right_on='bowler', how='outer')
+
+temp_bowler_count = temp_bowler_count.rename(columns={'team':'bowling_team','player':'bowler'}).reset_index()
+temp_bowler_count.index.name = None
+death_over_stats.index.name = None
+death_over_stats = death_over_stats.merge(temp_bowler_count, left_on='bowler', right_on='bowler', how='outer')
+
+
+plt.scatter(death_over_stats[death_over_stats['bowling_team']=='CSK']['economy'], death_over_stats[death_over_stats['bowling_team']=='CSK']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(death_over_stats[death_over_stats['bowling_team']=='MI']['economy'], death_over_stats[death_over_stats['bowling_team']=='MI']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(death_over_stats[death_over_stats['bowling_team']=='RCB']['economy'], death_over_stats[death_over_stats['bowling_team']=='RCB']['player_dismissed'], alpha=0.5, color='red')
+plt.scatter(death_over_stats[death_over_stats['bowling_team']=='DD']['economy'], death_over_stats[death_over_stats['bowling_team']=='DD']['player_dismissed'], alpha=0.5, color='black')
+plt.scatter(death_over_stats[death_over_stats['bowling_team']=='GL']['economy'], death_over_stats[death_over_stats['bowling_team']=='GL']['player_dismissed'], alpha=0.5, color='orange')
+plt.scatter(death_over_stats[death_over_stats['bowling_team']=='SRH']['economy'], death_over_stats[death_over_stats['bowling_team']=='SRH']['player_dismissed'], alpha=0.5, color='green')
+plt.scatter(death_over_stats[death_over_stats['bowling_team']=='RR']['economy'], death_over_stats[death_over_stats['bowling_team']=='RR']['player_dismissed'], alpha=0.5, color='darkblue')
+
+
+#### Power play bowlers ####
+
+
+
 
 for i in range(len(temp)):
     temp.iloc[i]=[x for x in temp.iloc[i] if not isinstance(x, int)]
