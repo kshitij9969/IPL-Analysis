@@ -367,6 +367,130 @@ death_over_stats.index.name = None
 death_over_stats = death_over_stats.merge(temp_bowler_count, left_on='bowler', right_on='bowler', how='outer')
 
 
+#### Opening bowler ####
+temp2 = delivery[['bowling_team','bowler']][delivery['over']==1]
+temp_bowler_count = temp2.groupby(['bowling_team','bowler'])['bowler'].count()
+temp_bowler_count = pd.DataFrame(temp_bowler_count)
+temp_bowler_count['temp_1'] = temp_bowler_count.index
+temp_bowler_count['team'] = temp_bowler_count['temp_1'].str[0]
+temp_bowler_count['player'] = temp_bowler_count['temp_1'].str[1]
+temp_bowler_count.drop(['temp_1'], axis=1, inplace=True)
+temp_bowler_count.index.name = None
+temp_bowler_count = temp_bowler_count.rename(columns={'first_over_bowled':'first_over_balls'})
+temp_bowler_count = temp_bowler_count[:-2]
+
+first_over_stats = delivery[delivery['over']==1]
+first_over_stats = first_over_stats.groupby(['bowling_team','bowler'])['total_runs'].sum().reset_index()
+first_over_balls = delivery[delivery['over']==1].groupby(['bowling_team','bowler'])['ball'].count().reset_index()
+first_over_wickets = delivery[delivery['over']==1].groupby(['bowling_team','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+
+first_over_stats = first_over_stats.merge(first_over_balls, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+first_over_stats = first_over_stats.merge(first_over_wickets, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+
+first_over_stats['economy']=first_over_stats['total_runs']*6/first_over_stats['ball']
+
+#### 19th Over Stats ####
+temp2 = delivery[['bowling_team','bowler']][delivery['over']==19]
+temp_bowler_count = temp2.groupby(['bowling_team','bowler'])['bowler'].count()
+temp_bowler_count = pd.DataFrame(temp_bowler_count)
+temp_bowler_count['temp_1'] = temp_bowler_count.index
+temp_bowler_count['team'] = temp_bowler_count['temp_1'].str[0]
+temp_bowler_count['player'] = temp_bowler_count['temp_1'].str[1]
+temp_bowler_count.drop(['temp_1'], axis=1, inplace=True)
+temp_bowler_count.index.name = None
+temp_bowler_count = temp_bowler_count.rename(columns={'bowler':'19_over_bowled'})
+temp_bowler_count = temp_bowler_count[:-2]
+
+nineteenth_over_stats = delivery[delivery['over']==19]
+nineteenth_over_stats = nineteenth_over_stats.groupby(['bowling_team','bowler'])['total_runs'].sum().reset_index()
+nineteenth_over_balls = delivery[delivery['over']==19].groupby(['bowling_team','bowler'])['ball'].count().reset_index()
+nineteenth_over_wickets = delivery[delivery['over']==19].groupby(['bowling_team','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+
+nineteenth_over_stats = nineteenth_over_stats.merge(nineteenth_over_balls, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+nineteenth_over_stats = nineteenth_over_stats.merge(nineteenth_over_wickets, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+
+nineteenth_over_stats['economy']=nineteenth_over_stats['total_runs']*6/nineteenth_over_stats['ball']
+
+#### Power play stats ####
+temp2 = delivery[['bowling_team','bowler']][np.logical_and(delivery['over']>=1, delivery['over']<=6)]
+temp_bowler_count = temp2.groupby(['bowling_team','bowler'])['bowler'].count()
+temp_bowler_count = pd.DataFrame(temp_bowler_count)
+temp_bowler_count['temp_1'] = temp_bowler_count.index
+temp_bowler_count['team'] = temp_bowler_count['temp_1'].str[0]
+temp_bowler_count['player'] = temp_bowler_count['temp_1'].str[1]
+temp_bowler_count.drop(['temp_1'], axis=1, inplace=True)
+temp_bowler_count.index.name = None
+temp_bowler_count = temp_bowler_count.rename(columns={'bowler':'power_play_bowled'})
+temp_bowler_count = temp_bowler_count[:-2]
+
+
+power_play_bowling = delivery[np.logical_and(delivery['over']>=1, delivery['over']<=6)]
+power_play_bowling = power_play_bowling.groupby(['bowling_team','bowler'])['total_runs'].sum().reset_index()
+power_play_bowling_balls = delivery[np.logical_and(delivery['over']>=1, delivery['over']<=6)].groupby(['bowling_team','bowler'])['ball'].count().reset_index()
+power_play_bowling_wickets = delivery[np.logical_and(delivery['over']>=1, delivery['over']<=6)].groupby(['bowling_team','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+
+power_play_bowling = power_play_bowling.merge(power_play_bowling_balls, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+power_play_bowling = power_play_bowling.merge(power_play_bowling_wickets, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+
+power_play_bowling['economy']=power_play_bowling['total_runs']*6/power_play_bowling['ball']
+
+
+#### Middle overs between 6 - 12 ####
+
+temp2 = delivery[['bowling_team','bowler']][np.logical_and(delivery['over']>=7, delivery['over']<=12)]
+temp_bowler_count = temp2.groupby(['bowling_team','bowler'])['bowler'].count()
+temp_bowler_count = pd.DataFrame(temp_bowler_count)
+temp_bowler_count['temp_1'] = temp_bowler_count.index
+temp_bowler_count['team'] = temp_bowler_count['temp_1'].str[0]
+temp_bowler_count['player'] = temp_bowler_count['temp_1'].str[1]
+temp_bowler_count.drop(['temp_1'], axis=1, inplace=True)
+temp_bowler_count.index.name = None
+temp_bowler_count = temp_bowler_count.rename(columns={'bowler':'power_play_bowled'})
+temp_bowler_count = temp_bowler_count[:-2]
+
+
+Middle_overs_six_twelve = delivery[np.logical_and(delivery['over']>=7, delivery['over']<=12)]
+Middle_overs_six_twelve = Middle_overs_six_twelve.groupby(['bowling_team','bowler'])['total_runs'].sum().reset_index()
+Middle_overs_six_twelve_balls = delivery[np.logical_and(delivery['over']>=7, delivery['over']<=12)].groupby(['bowling_team','bowler'])['ball'].count().reset_index()
+Middle_overs_six_twelve_wickets = delivery[np.logical_and(delivery['over']>=7, delivery['over']<=12)].groupby(['bowling_team','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+
+Middle_overs_six_twelve = Middle_overs_six_twelve.merge(Middle_overs_six_twelve_balls, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+Middle_overs_six_twelve = Middle_overs_six_twelve.merge(Middle_overs_six_twelve_wickets, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+
+Middle_overs_six_twelve['economy']=Middle_overs_six_twelve['total_runs']*6/Middle_overs_six_twelve['ball']
+
+
+#### Middle overs 12 - 18
+temp2 = delivery[['bowling_team','bowler']][np.logical_and(delivery['over']>=7, delivery['over']<=12)]
+temp_bowler_count = temp2.groupby(['bowling_team','bowler'])['bowler'].count()
+temp_bowler_count = pd.DataFrame(temp_bowler_count)
+temp_bowler_count['temp_1'] = temp_bowler_count.index
+temp_bowler_count['team'] = temp_bowler_count['temp_1'].str[0]
+temp_bowler_count['player'] = temp_bowler_count['temp_1'].str[1]
+temp_bowler_count.drop(['temp_1'], axis=1, inplace=True)
+temp_bowler_count.index.name = None
+temp_bowler_count = temp_bowler_count.rename(columns={'bowler':'power_play_bowled'})
+temp_bowler_count = temp_bowler_count[:-2]
+
+
+Middle_overs_twelve_eighteen = delivery[np.logical_and(delivery['over']>=7, delivery['over']<=12)]
+Middle_overs_twelve_eighteen = Middle_overs_twelve_eighteen.groupby(['bowling_team','bowler'])['total_runs'].sum().reset_index()
+Middle_overs_twelve_eighteen_balls = delivery[np.logical_and(delivery['over']>=7, delivery['over']<=12)].groupby(['bowling_team','bowler'])['ball'].count().reset_index()
+Middle_overs_twelve_eighteen_wickets = delivery[np.logical_and(delivery['over']>=7, delivery['over']<=12)].groupby(['bowling_team','bowler'])['player_dismissed'].agg(lambda x:(x!=0).sum()).reset_index()
+
+Middle_overs_twelve_eighteen = Middle_overs_twelve_eighteen.merge(Middle_overs_twelve_eighteen_balls, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+Middle_overs_twelve_eighteen = Middle_overs_twelve_eighteen.merge(Middle_overs_twelve_eighteen_wickets, left_on=['bowling_team','bowler'], right_on=['bowling_team','bowler'], how='outer')
+
+Middle_overs_twelve_eighteen['economy']=Middle_overs_twelve_eighteen['total_runs']*6/Middle_overs_twelve_eighteen['ball']
+
+
+#### Batting opening ####
+
+
+
+
+#### Death over scatter plots ####
+
 plt.scatter(death_over_stats[death_over_stats['bowling_team']=='CSK']['economy'], death_over_stats[death_over_stats['bowling_team']=='CSK']['player_dismissed'], alpha=0.5, color='yellow')
 plt.scatter(death_over_stats[death_over_stats['bowling_team']=='MI']['economy'], death_over_stats[death_over_stats['bowling_team']=='MI']['player_dismissed'], alpha=0.5, color='blue')
 plt.scatter(death_over_stats[death_over_stats['bowling_team']=='RCB']['economy'], death_over_stats[death_over_stats['bowling_team']=='RCB']['player_dismissed'], alpha=0.5, color='red')
@@ -376,7 +500,64 @@ plt.scatter(death_over_stats[death_over_stats['bowling_team']=='SRH']['economy']
 plt.scatter(death_over_stats[death_over_stats['bowling_team']=='RR']['economy'], death_over_stats[death_over_stats['bowling_team']=='RR']['player_dismissed'], alpha=0.5, color='darkblue')
 
 
-#### Power play bowlers ####
+#### Nineteenth over scatter plots ####
+
+plt.scatter(nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='CSK']['economy'], nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='CSK']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='MI']['economy'], nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='MI']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='RCB']['economy'], nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='RCB']['player_dismissed'], alpha=0.5, color='red')
+plt.scatter(nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='DD']['economy'], nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='DD']['player_dismissed'], alpha=0.5, color='black')
+plt.scatter(nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='GL']['economy'], nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='GL']['player_dismissed'], alpha=0.5, color='orange')
+plt.scatter(nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='SRH']['economy'], nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='SRH']['player_dismissed'], alpha=0.5, color='green')
+plt.scatter(nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='RR']['economy'], nineteenth_over_stats[nineteenth_over_stats['bowling_team']=='RR']['player_dismissed'], alpha=0.5, color='darkblue')
+
+
+#### First over scatter plots ####
+
+plt.scatter(first_over_stats[first_over_stats['bowling_team']=='CSK']['economy'], first_over_stats[first_over_stats['bowling_team']=='CSK']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(first_over_stats[first_over_stats['bowling_team']=='MI']['economy'], first_over_stats[first_over_stats['bowling_team']=='MI']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(first_over_stats[first_over_stats['bowling_team']=='RCB']['economy'], first_over_stats[first_over_stats['bowling_team']=='RCB']['player_dismissed'], alpha=0.5, color='red')
+plt.scatter(first_over_stats[first_over_stats['bowling_team']=='DD']['economy'], first_over_stats[first_over_stats['bowling_team']=='DD']['player_dismissed'], alpha=0.5, color='black')
+plt.scatter(first_over_stats[first_over_stats['bowling_team']=='GL']['economy'], first_over_stats[first_over_stats['bowling_team']=='GL']['player_dismissed'], alpha=0.5, color='orange')
+plt.scatter(first_over_stats[first_over_stats['bowling_team']=='SRH']['economy'], first_over_stats[first_over_stats['bowling_team']=='SRH']['player_dismissed'], alpha=0.5, color='green')
+plt.scatter(first_over_stats[first_over_stats['bowling_team']=='RR']['economy'], first_over_stats[first_over_stats['bowling_team']=='RR']['player_dismissed'], alpha=0.5, color='darkblue')
+
+
+#### Power play scatter plots ####
+plt.scatter(power_play_bowling[power_play_bowling['bowling_team']=='CSK']['economy'], power_play_bowling[power_play_bowling['bowling_team']=='CSK']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(power_play_bowling[power_play_bowling['bowling_team']=='MI']['economy'], power_play_bowling[power_play_bowling['bowling_team']=='MI']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(power_play_bowling[power_play_bowling['bowling_team']=='RCB']['economy'], power_play_bowling[power_play_bowling['bowling_team']=='RCB']['player_dismissed'], alpha=0.5, color='red')
+plt.scatter(power_play_bowling[power_play_bowling['bowling_team']=='DD']['economy'], power_play_bowling[power_play_bowling['bowling_team']=='DD']['player_dismissed'], alpha=0.5, color='black')
+plt.scatter(power_play_bowling[power_play_bowling['bowling_team']=='GL']['economy'], power_play_bowling[power_play_bowling['bowling_team']=='GL']['player_dismissed'], alpha=0.5, color='orange')
+plt.scatter(power_play_bowling[power_play_bowling['bowling_team']=='SRH']['economy'], power_play_bowling[power_play_bowling['bowling_team']=='SRH']['player_dismissed'], alpha=0.5, color='green')
+plt.scatter(power_play_bowling[power_play_bowling['bowling_team']=='RR']['economy'], power_play_bowling[power_play_bowling['bowling_team']=='RR']['player_dismissed'], alpha=0.5, color='darkblue')
+
+
+
+#### Middle over 6 - 12 scatter plots ####
+plt.scatter(Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='CSK']['economy'], Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='CSK']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='MI']['economy'], Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='MI']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='RCB']['economy'], Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='RCB']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='DD']['economy'], Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='DD']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='GL']['economy'], Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='GL']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='SRH']['economy'], Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='SRH']['player_dismissed'], alpha=0.5, color='yellow')
+plt.scatter(Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='RR']['economy'], Middle_overs_six_twelve[Middle_overs_six_twelve['bowling_team']=='RR']['player_dismissed'], alpha=0.5, color='yellow')
+
+
+#### Middle over 12 - 18 scatter plots ####
+plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='CSK']['economy'], Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='CSK']['player_dismissed'], alpha=0.5, color='red')
+plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='MI']['economy'], Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='MI']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='RCB']['economy'], Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='RCB']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='DD']['economy'], Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='DD']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='GL']['economy'], Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='GL']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='SRH']['economy'], Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='SRH']['player_dismissed'], alpha=0.5, color='blue')
+plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='RR']['economy'], Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_team']=='RR']['player_dismissed'], alpha=0.5, color='blue')
+
+
+
+
+
+
+
 
 
 
