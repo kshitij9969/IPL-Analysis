@@ -164,7 +164,7 @@ batting['strike_rate'] = batting['runs_scored']*100/batting['balls_played']
 
 # Calculating average runs
 # Average runs = runs scored per match or average runs = (runs scored)/(matches played)
-batting['average'] = batting['runs_scored']/batting['matches_played']
+batting['average'] = batting['runs_scored']/batting['matches']
 
 
 # Calculating bowler parameters
@@ -555,12 +555,61 @@ plt.scatter(Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['bowling_t
 
 
 
+#### K means Clustering ####
+
+temp1 = batting[batting['matches']>=60]
+temp2 = batting[batting['matches']>=60]
+plt.scatter(temp1['average'],temp2['strike_rate'])
+
+death_over_stats['average_wickets'] = death_over_stats['player_dismissed']/death_over_stats['ball']
+temp3 = death_over_stats[death_over_stats['ball']>=60]['average_wickets']
+temp4 = death_over_stats[death_over_stats['ball']>=60]['economy']
+plt.scatter(temp4, temp3)
 
 
+first_over_stats['average_wickets'] = first_over_stats['player_dismissed']/first_over_stats['ball']
+temp5 = first_over_stats[first_over_stats['ball']>=80]['average_wickets']
+temp6 = first_over_stats[first_over_stats['ball']>=80]['economy']
+plt.scatter(temp6, temp5)
+
+nineteenth_over_stats['average_wickets'] = nineteenth_over_stats['player_dismissed']/nineteenth_over_stats['ball']
+temp7 = nineteenth_over_stats[nineteenth_over_stats['ball']>=40]['average_wickets']
+temp8 = nineteenth_over_stats[nineteenth_over_stats['ball']>=40]['economy']
+plt.scatter(temp8, temp7)
+
+power_play_bowling['average_wickets'] = power_play_bowling['player_dismissed']/power_play_bowling['ball']
+temp9 = power_play_bowling[power_play_bowling['ball']>=40]['average_wickets']
+temp10 = power_play_bowling[power_play_bowling['ball']>=40]['economy']
+plt.scatter(temp10, temp9)
+Middle_overs_twelve_eighteen['average_wickets']= Middle_overs_twelve_eighteen['player_dismissed']/Middle_overs_twelve_eighteen['ball']
+
+from sklearn.cluster import KMeans
+cost =[] 
+temp11 = pd.DataFrame()
+temp11['X'] = Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['ball']>=200]['economy']
+temp11['Y'] = Middle_overs_twelve_eighteen[Middle_overs_twelve_eighteen['ball']>=200]['average_wickets']
+
+for i in range(1, 11): 
+    KM = KMeans(n_clusters = i, max_iter = 500) 
+    KM.fit(temp11) 
+      
+    # calculates squared error 
+    # for the clustered points 
+    cost.append(KM.inertia_)      
+  
+# plot the cost against K values 
+plt.plot(range(1, 11), cost, color ='g', linewidth ='3') 
+plt.xlabel("Value of K") 
+plt.ylabel("Sqaured Error (Cost)")
+plt.show() # clear the plot 
+
+   KM = KMeans(n_clusters = 3, max_iter = 500) 
+   KM.fit(temp11) 
+   KM.labels_
+plt.scatter(temp11['X'],temp11['Y'], c=KM.labels_, cmap='rainbow')
 
 
-
-
+sns.pairplot(matches)
 
 for i in range(len(temp)):
     temp.iloc[i]=[x for x in temp.iloc[i] if not isinstance(x, int)]
