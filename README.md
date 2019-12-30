@@ -1,7 +1,7 @@
 Motivation: 
 
 Indian Premeir League is the largest cricket tournament in the world hosted by the Board of Cricket Control in India(BCCI).
-It is no surprise that the largest tournament hosts one of the largest auctions in the world(atleast as far as cricket tournaments
+It is no surprise that the largest tournament hosts one of the largest auctions in the world(as far as cricket tournaments
 are concerened).
 
 Some fun facts about IPL Auction
