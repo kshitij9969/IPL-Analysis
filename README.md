@@ -30,6 +30,7 @@ You can download the dataset from either this repository or https://www.kaggle.c
 
 IPL_Analysis.py - Python code for analysing the player stats
 
+I have also created a tableau dashboard. https://public.tableau.com/profile/kshitij6814#!/vizhome/IPL_Analysis_15776535832250/Batting
 
 Any suggestion for improvement in the code is welcomed.
 
