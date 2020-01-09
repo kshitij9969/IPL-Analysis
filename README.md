@@ -1,35 +1,24 @@
-Motivation: 
+#IPL Player Analysis For Auctions
 
-Indian Premier League is the largest cricket tournament in the world hosted by the Board of Cricket Control in India(BCCI).
-It is no surprise that the largest tournament hosts one of the largest auctions in the world(as far as cricket tournaments
-are concerned).
+Problem Statement - Indian Premier League (IPL) is the largest domestic cricket tournament in the world. A better pool of team would boost the revenue of any tournament. Analyse the players for making better decisions at the auctions.
 
-Some fun facts about IPL Auction
-1. Each franchise spends close to 12$ million on buying players
-2. Although the number of franchises changes each year, roughly 8-10 franchises bid during the auction. (transaction of 120$ million)
-3. Cost of broadcasting rights: 16.3 Billion INR
-4. Cost of title sponsorship: 2.1 Billion INR
+A good pool of balanced team will directly impact the revenue and retain the trust of stakeholders.
+Major sources of revenue are, but not limited to,
+1. Sponsorship - ~60% with official partner costing 300$ million
+2. Broadcasting Rights - ~ 2.5$ billions
+3. Team Sponsors - ~ 400 crore INR
+4. Ticket Sales - ~ 200 crore INR
+5. Merchandise - ~2 billion
 
-Needless to say that a major aspect of IPL is monetary and hence mandates business acumen to make the 
-most profits out of the 2 months long tournament.
+There are two data sets containing ball-by-ball details and match wise details from IPL 2008 to IPL 2017
 
-Irrespective of the money poured, it is the teams or players that keep the tournament alive, garner more viewership,
-attract more sponsors and are the raw material in the factory of IPL.
+Major Highlights:
+1. Cleansed and preprocessed the dataset using pandas library.
+2. Using feature engineering created different parameters like strike rate, economy, wickets taken, matches played, team-wise analysis, win and loss trends and their relation with the decision made after winning the toss.
+3. Using K-means clusters similar players into different classes. This would give us more economic options at the time of auctions.
+4. For the most effective communication, a Tableau dashboard is created. In this dashboard, players are further sieved through different filters for better player selection.
 
-Last year in 2019, people witnessed some major hiccups in team selection of a few franchises. This, unfortunately, led to a very one-sided tournament. Viewer avoided the matches whose results they had already predicted. Such predictable tournaments not only
-impact the business severely but also hits the morale of debuting players.
+Conclusion and Future Work - The dashboard and classification helps us understand each player in detail. As future work, I would like to incorporate recent(past 6 months performance in other tournaments) performance of the player which will help us understand the form of the player. A recommendation system which would give suggestion based on the type of player needed in the team.
 
-To address this it was necessary to do a thorough analysis of all players. 
-
-Dataset: (Source: Kaggle)
-1. Delivery - Contains data of every ball bowled in IPL 2008-2017
-2. Matches - Contains metadata of every match played in IPL 2008-2017
-
-You can download the dataset from either this repository or https://www.kaggle.com/manasgarg/ipl
-
-IPL_Analysis.py - Python code for analysing the player stats
-
-I have also created a tableau dashboard. https://public.tableau.com/profile/kshitij6814#!/vizhome/IPL_Analysis_15776535832250/Batting
-
-Any suggestion for improvement in the code is welcomed.
-
+For most effective communication, a tableau dashboard is created and you can find it here:
+https://public.tableau.com/profile/kshitij6814#!/vizhome/IPL_Analysis_15776535832250/Batting
