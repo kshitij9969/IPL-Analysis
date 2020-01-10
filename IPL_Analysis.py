@@ -16,8 +16,8 @@ import seaborn as sns
 
 py.init_notebook_mode(connected=True)
 plt.style.use('fivethirtyeight')
-os.chdir(r"/Users/kshitijsingh/Downloads/IPL-Analysis") # For macOS
-os.chdir(r"C:\Users\ks20092693\IPL_Analysis_Practice") # For windows
+os.chdir(r"<--Directory Path-->") # For macOS
+os.chdir(r"<--Directory Path-->") # For windows
 
 # 2. Importing the datasets
 matches = pd.read_csv('matches.csv')
@@ -791,9 +791,6 @@ death_over['w_economy_norm'] = w_economy
 In this section, k-means is applied for each classification and 
 sub-classification.
 '''
-
-
-
 #### First over ####
 ####### Balls >= 100 #######
 # Optimum K for balls >= 100
@@ -853,7 +850,6 @@ plt.scatter(first_over[np.logical_and(first_over['ball']>=20,first_over['ball']<
 
 
 #### power play overs ####
-
 #### Balls <= 650 and >=300
 from sklearn.cluster import KMeans
 cost =[] 
